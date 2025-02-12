@@ -1,0 +1,25 @@
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+def chatbot_response(user_input):
+    responses = {
+        "hello": "Hi there! How can I help you?",
+        "how are you": "I'm just a bot, but I'm doing great!",
+        "bye": "Goodbye! Have a great day!",
+    }
+    return responses.get(user_input.lower(), "I'm not sure how to respond to that.")
+
+@app.route("/", methods=["GET", "POST"])
+def home():
+    chatbot_reply = ""
+    user_input = ""
+
+    if request.method == "POST":
+        user_input = request.form.get("user_input")  # Get form input safely
+        chatbot_reply = chatbot_response(user_input)
+
+    return render_template("index.html", user_input=user_input, chatbot_response=chatbot_reply)
+
+if __name__ == "__main__":
+    app.run(debug=True)
