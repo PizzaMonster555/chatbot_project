@@ -1,18 +1,24 @@
-from flask import Flask, render_template, request, jsonify
+import openai
+import os
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
+# Set OpenAI API Key
+openai.api_key = "your_api_key_here"  # Replace with your actual API key
+
 def chatbot_response(user_input):
-    if not user_input:  # Check if user_input is None or empty
-        return "I didn't understand that. Can you rephrase?"
+    if not user_input:
+        return "I didn't get that. Can you repeat?"
 
-    responses = {
-        "hello": "Hi there! How can I help you?",
-        "how are you": "I'm just a bot, but I'm doing great!",
-        "bye": "Goodbye! Have a great day!",
-    }
-    return responses.get(user_input.lower(), "I'm not sure how to respond to that.")
-
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_input}]
+        )
+        return response["choices"][0]["message"]["content"]
+    except Exception as e:
+        return "Oops! Something went wrong. Try again later."
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -20,18 +26,10 @@ def home():
     user_input = ""
 
     if request.method == "POST":
-        user_input = request.form.get("user_input")  # Get form input safely
+        user_input = request.form.get("user_input")
         chatbot_reply = chatbot_response(user_input)
 
     return render_template("index.html", user_input=user_input, chatbot_response=chatbot_reply)
-
-# **NEW: Add an API Route for Chatbot Responses**
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.get_json()  # Get JSON input
-    user_input = data.get("message", "")  # Extract the "message" key
-    response = chatbot_response(user_input)  # Process response
-    return jsonify({"response": response})  # Return as JSON
 
 if __name__ == "__main__":
     app.run(debug=True)
