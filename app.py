@@ -3,12 +3,16 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 def chatbot_response(user_input):
+    if not user_input:  # Check if user_input is None or empty
+        return "I didn't understand that. Can you rephrase?"
+
     responses = {
         "hello": "Hi there! How can I help you?",
         "how are you": "I'm just a bot, but I'm doing great!",
         "bye": "Goodbye! Have a great day!",
     }
     return responses.get(user_input.lower(), "I'm not sure how to respond to that.")
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
