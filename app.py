@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -20,6 +20,14 @@ def home():
         chatbot_reply = chatbot_response(user_input)
 
     return render_template("index.html", user_input=user_input, chatbot_response=chatbot_reply)
+
+# **NEW: Add an API Route for Chatbot Responses**
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()  # Get JSON input
+    user_input = data.get("message", "")  # Extract the "message" key
+    response = chatbot_response(user_input)  # Process response
+    return jsonify({"response": response})  # Return as JSON
 
 if __name__ == "__main__":
     app.run(debug=True)
