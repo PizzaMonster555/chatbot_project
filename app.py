@@ -8,7 +8,7 @@ load_dotenv()  # Load environment variables from .env
 app = Flask(__name__)
 
 # Use environment variable for OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("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")
 
 def chatbot_response(user_input):
     if not user_input:
