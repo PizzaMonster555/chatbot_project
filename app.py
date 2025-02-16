@@ -4,8 +4,8 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# Set OpenAI API Key
-openai.api_key = "your_api_key_here"  # Replace with your actual API key
+# Use environment variable for OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def chatbot_response(user_input):
     if not user_input:
